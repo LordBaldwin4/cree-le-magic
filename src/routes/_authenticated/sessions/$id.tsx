@@ -62,7 +62,7 @@ function SessionDetail() {
   });
 
   const updateStatus = useMutation({
-    mutationFn: async ({ studentId, status }: { studentId: string; status: string }) => {
+    mutationFn: async ({ studentId, status }: { studentId: string; status: "present" | "partial" | "absent" | "pending" }) => {
       const existing = attendances?.find((a) => a.student_id === studentId);
       if (existing) {
         const { error } = await supabase.from("attendances").update({
