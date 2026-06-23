@@ -174,7 +174,7 @@ function SessionDetail() {
                       <TableCell className="text-right">
                         <Select
                           value={att?.status ?? ""}
-                          onValueChange={(v) => updateStatus.mutate({ studentId: e.student_id, status: v })}
+                          onValueChange={(v) => updateStatus.mutate({ studentId: e.student_id, status: v as "present" | "partial" | "absent" })}
                         >
                           <SelectTrigger className="w-36"><SelectValue placeholder="Modifier" /></SelectTrigger>
                           <SelectContent>
