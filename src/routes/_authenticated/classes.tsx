@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, GraduationCap, UserPlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { CreateClassDialog } from "@/components/CreateClassDialog";
 
 export const Route = createFileRoute("/_authenticated/classes")({
   head: () => ({ meta: [{ title: "Classes — FacePresence" }] }),
