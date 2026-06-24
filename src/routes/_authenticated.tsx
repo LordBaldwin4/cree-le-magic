@@ -3,10 +3,11 @@ import { useEffect } from "react";
 import { useAuth, primaryRole, type AppRole } from "@/lib/auth";
 import {
   ScanFace, LayoutDashboard, Calendar, GraduationCap, Users, UserCircle2,
-  ClipboardList, LogOut, Camera, Settings,
+  ClipboardList, LogOut, Camera, Settings, Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CreateClassDialog } from "@/components/CreateClassDialog";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
@@ -92,14 +93,32 @@ function AuthLayout() {
               <p className="text-xs capitalize text-muted-foreground">{roleLabel(role)}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="mt-2 w-full justify-start gap-2 text-muted-foreground"
-            onClick={async () => { await signOut(); navigate({ to: "/auth" }); }}
-          >
-            <LogOut className="h-4 w-4" /> Se déconnecter
-          </Button>
+          <div className="mt-2 flex gap-2">
+            {(role === "admin" || role === "teacher") && (
+              <CreateClassDialog
+                trigger={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 justify-center gap-1.5 text-xs h-9"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Créer classe
+                  </Button>
+                }
+              />
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "justify-start gap-2 text-muted-foreground h-9",
+                (role === "admin" || role === "teacher") ? "flex-1 text-xs px-2 justify-center" : "w-full"
+              )}
+              onClick={async () => { await signOut(); navigate({ to: "/auth" }); }}
+            >
+              <LogOut className="h-4 w-4" /> Se déconnecter
+            </Button>
+          </div>
         </div>
       </aside>
 
@@ -113,9 +132,20 @@ function AuthLayout() {
             </div>
             <span className="font-display font-bold">FacePresence</span>
           </Link>
-          <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate({ to: "/auth" }); }}>
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {(role === "admin" || role === "teacher") && (
+              <CreateClassDialog
+                trigger={
+                  <Button variant="outline" size="sm" className="gap-1 text-xs h-8 px-2.5">
+                    <Plus className="h-3 w-3" /> Créer classe
+                  </Button>
+                }
+              />
+            )}
+            <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate({ to: "/auth" }); }}>
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </header>
         <main className="flex-1 overflow-x-hidden">
           <Outlet />
