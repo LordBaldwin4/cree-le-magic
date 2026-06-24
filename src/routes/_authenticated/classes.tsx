@@ -24,6 +24,7 @@ function ClassesPage() {
   const { roles } = useAuth();
   const role = primaryRole(roles);
   const isAdmin = role === "admin";
+  const canCreate = isAdmin || role === "teacher";
 
   const { data: classes } = useQuery({
     queryKey: ["classes-list"],
@@ -40,7 +41,7 @@ function ClassesPage() {
           <h1 className="font-display text-3xl font-bold">Classes</h1>
           <p className="mt-1 text-muted-foreground">Gestion des classes et inscriptions.</p>
         </div>
-        {isAdmin && <CreateClassDialog />}
+        {canCreate && <CreateClassDialog />}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
