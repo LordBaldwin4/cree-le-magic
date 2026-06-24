@@ -70,7 +70,7 @@ function FaceSetupPage() {
 
   const saveProfile = useMutation({
     mutationFn: async () => {
-      if (!capturedImage) throw new Error("Aucune image");
+      if (!capturedImage || !capturedImage.startsWith("data:image")) throw new Error("Capture invalide, recommencez.");
       setEnrolling(true);
       // Phase 1 : enregistrement local. L'indexation AWS Rekognition sera branchée
       // une fois les identifiants AWS fournis par l'administrateur.
