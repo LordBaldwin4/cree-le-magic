@@ -34,21 +34,36 @@ function FaceSetupPage() {
 
   async function startCamera() {
     try {
-      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 640 } } });
       setStream(s);
-      if (videoRef.current) videoRef.current.srcObject = s;
+      if (videoRef.current) {
+        videoRef.current.srcObject = s;
+        await videoRef.current.play().catch(() => {});
+      }
     } catch {
       toast.error("Impossible d'accéder à la webcam");
     }
   }
 
   function capture() {
-    if (!videoRef.current) return;
+    const v = videoRef.current;
+    if (!v) return;
+    const w = v.videoWidth;
+    const h = v.videoHeight;
+    if (!w || !h) {
+      toast.error("La webcam n'est pas encore prête, réessayez dans une seconde.");
+      return;
+    }
     const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    canvas.getContext("2d")!.drawImage(videoRef.current, 0, 0);
-    setCapturedImage(canvas.toDataURL("image/jpeg", 0.85));
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext("2d")!.drawImage(v, 0, 0, w, h);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+    if (!dataUrl || dataUrl.length < 100) {
+      toast.error("Capture échouée, réessayez.");
+      return;
+    }
+    setCapturedImage(dataUrl);
     stream?.getTracks().forEach((t) => t.stop());
     setStream(null);
   }
