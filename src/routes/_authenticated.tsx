@@ -3,10 +3,11 @@ import { useEffect } from "react";
 import { useAuth, primaryRole, type AppRole } from "@/lib/auth";
 import {
   ScanFace, LayoutDashboard, Calendar, GraduationCap, Users, UserCircle2,
-  ClipboardList, LogOut, Camera, Settings,
+  ClipboardList, LogOut, Camera, Settings, Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CreateClassDialog } from "@/components/CreateClassDialog";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
