@@ -151,7 +151,7 @@ function FaceSetupPage() {
               </>
             ) : stream ? (
               <>
-                <video ref={videoRef} autoPlay playsInline className="aspect-square w-full max-w-sm rounded-xl bg-muted object-cover" />
+                <video ref={videoRef} autoPlay playsInline muted className="aspect-square w-full max-w-sm rounded-xl bg-muted object-cover" />
                 <Button onClick={capture} className="mt-4 gap-2"><Camera className="h-4 w-4" /> Capturer</Button>
               </>
             ) : (
