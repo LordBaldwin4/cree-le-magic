@@ -24,6 +24,7 @@ function ClassesPage() {
   const { roles } = useAuth();
   const role = primaryRole(roles);
   const isAdmin = role === "admin";
+  const canCreate = isAdmin || role === "teacher";
 
   const { data: classes } = useQuery({
     queryKey: ["classes-list"],
