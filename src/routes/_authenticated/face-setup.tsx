@@ -34,28 +34,43 @@ function FaceSetupPage() {
 
   async function startCamera() {
     try {
-      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 640 } } });
       setStream(s);
-      if (videoRef.current) videoRef.current.srcObject = s;
+      if (videoRef.current) {
+        videoRef.current.srcObject = s;
+        await videoRef.current.play().catch(() => {});
+      }
     } catch {
       toast.error("Impossible d'accéder à la webcam");
     }
   }
 
   function capture() {
-    if (!videoRef.current) return;
+    const v = videoRef.current;
+    if (!v) return;
+    const w = v.videoWidth;
+    const h = v.videoHeight;
+    if (!w || !h) {
+      toast.error("La webcam n'est pas encore prête, réessayez dans une seconde.");
+      return;
+    }
     const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    canvas.getContext("2d")!.drawImage(videoRef.current, 0, 0);
-    setCapturedImage(canvas.toDataURL("image/jpeg", 0.85));
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext("2d")!.drawImage(v, 0, 0, w, h);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+    if (!dataUrl || dataUrl.length < 100) {
+      toast.error("Capture échouée, réessayez.");
+      return;
+    }
+    setCapturedImage(dataUrl);
     stream?.getTracks().forEach((t) => t.stop());
     setStream(null);
   }
 
   const saveProfile = useMutation({
     mutationFn: async () => {
-      if (!capturedImage) throw new Error("Aucune image");
+      if (!capturedImage || !capturedImage.startsWith("data:image")) throw new Error("Capture invalide, recommencez.");
       setEnrolling(true);
       // Phase 1 : enregistrement local. L'indexation AWS Rekognition sera branchée
       // une fois les identifiants AWS fournis par l'administrateur.
@@ -136,7 +151,7 @@ function FaceSetupPage() {
               </>
             ) : stream ? (
               <>
-                <video ref={videoRef} autoPlay playsInline className="aspect-square w-full max-w-sm rounded-xl bg-muted object-cover" />
+                <video ref={videoRef} autoPlay playsInline muted className="aspect-square w-full max-w-sm rounded-xl bg-muted object-cover" />
                 <Button onClick={capture} className="mt-4 gap-2"><Camera className="h-4 w-4" /> Capturer</Button>
               </>
             ) : (
