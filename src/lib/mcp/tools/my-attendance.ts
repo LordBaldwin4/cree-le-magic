@@ -8,12 +8,13 @@ export default defineTool({
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated())
+    const userId = ctx.getUserId();
+    if (!ctx.isAuthenticated() || !userId)
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     const { data, error } = await supabaseForUser(ctx)
       .from("attendances")
       .select("id, session_id, status, joined_at, left_at, verification_method, confidence_score")
-      .eq("student_id", ctx.getUserId())
+      .eq("student_id", userId)
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };

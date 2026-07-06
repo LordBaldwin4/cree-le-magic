@@ -52,7 +52,7 @@
                 "scheduled",
                 "live",
                 "ended",
-                "canceled"
+                "cancelled"
               ]
             },
             "limit": {

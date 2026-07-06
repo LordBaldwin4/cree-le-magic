@@ -8,7 +8,7 @@ export default defineTool({
   description: "List course sessions visible to the signed-in user. Optionally filter by status.",
   inputSchema: {
     status: z
-      .enum(["scheduled", "live", "ended", "canceled"])
+      .enum(["scheduled", "live", "ended", "cancelled"])
       .optional()
       .describe("Optional session status filter."),
     limit: z.number().int().min(1).max(100).optional().describe("Max rows to return (default 20)."),
