@@ -25,7 +25,8 @@ function ClassesPage() {
   const { roles } = useAuth();
   const role = primaryRole(roles);
   const isAdmin = role === "admin";
-  const canCreate = isAdmin || role === "teacher";
+  const canManage = isAdmin || role === "teacher";
+  const canCreate = canManage;
 
   const { data: classes } = useQuery({
     queryKey: ["classes-list"],
@@ -46,7 +47,7 @@ function ClassesPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {classes?.map((c) => <ClassCard key={c.id} classRow={c} isAdmin={isAdmin} />)}
+        {classes?.map((c) => <ClassCard key={c.id} classRow={c} canManage={canManage} />)}
         {classes?.length === 0 && (
           <Card className="md:col-span-2 lg:col-span-3">
             <CardContent className="grid place-items-center gap-3 py-16 text-center">
@@ -62,7 +63,7 @@ function ClassesPage() {
   );
 }
 
-function ClassCard({ classRow, isAdmin }: { classRow: any; isAdmin: boolean }) {
+function ClassCard({ classRow, canManage }: { classRow: any; canManage: boolean }) {
   const qc = useQueryClient();
   const { data: enrollments } = useQuery({
     queryKey: ["class-enrollments", classRow.id],
@@ -101,7 +102,7 @@ function ClassCard({ classRow, isAdmin }: { classRow: any; isAdmin: boolean }) {
           {enrollments?.slice(0, 5).map((e: any) => (
             <li key={e.id} className="flex items-center justify-between text-sm">
               <span>{e.profiles?.full_name || e.profiles?.email}</span>
-              {isAdmin && (
+              {canManage && (
                 <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => removeEnrollment.mutate(e.id)}>
                   <Trash2 className="h-3 w-3" />
                 </Button>
@@ -113,7 +114,7 @@ function ClassCard({ classRow, isAdmin }: { classRow: any; isAdmin: boolean }) {
           )}
           {enrollments?.length === 0 && <li className="text-xs text-muted-foreground">Aucun élève inscrit.</li>}
         </ul>
-        {isAdmin && <EnrollDialog classId={classRow.id} />}
+        {canManage && <EnrollDialog classId={classRow.id} />}
       </CardContent>
     </Card>
   );
